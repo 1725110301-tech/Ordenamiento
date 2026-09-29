@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Fila PEPS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <h1>Sistema de Atención Estudiantil — PEPS</h1>
+
+  <!-- Mensajes de alerta (flash) -->
+  {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+    <p class="alerta {{ categoria }}">{{ mensaje }}</p>
+  {% endfor %}
+
+  <!-- Formulario para agregar un estudiante -->
+  <section>
+    <h2>Agregar estudiante a la fila</h2>
+    <form action="/agregar" method="POST">
+      <label>Matrícula:  <input type="text" name="matricula" required></label>
+      <label>Nombre:     <input type="text" name="nombre" required></label>
+      <label>Carrera:    <input type="text" name="carrera" required></label>
+      <label>Trámite:    <input type="text" name="tramite" required></label>
+      <button type="submit">Agregar</button>
+    </form>
+  </section>
+
+  <!-- Tabla con los estudiantes en espera -->
+  <section>
+    <h2>Fila actual ({{ fila|length }} esperando)</h2>
+
+    {% if fila %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Matrícula</th>
+            <th>Nombre</th>
+            <th>Carrera</th>
+            <th>Trámite</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for estudiante in fila %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ estudiante.matricula }}</td>
+              <td>{{ estudiante.nombre }} {% if loop.first %}← siguiente{% endif %}</td>
+              <td>{{ estudiante.carrera }}</td>
+              <td>{{ estudiante.tramite }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Botones de acción -->
+      <form action="/atender" method="POST">
+        <button type="submit">Atender al primero</button>
+      </form>
+
+      <form action="/limpiar" method="POST">
+        <button type="submit">Limpiar toda la fila</button>
+      </form>
+
+    {% else %}
+      <p>No hay nadie en la fila.</p>
+    {% endif %}
+  </section>
+
+</body>
+</html>

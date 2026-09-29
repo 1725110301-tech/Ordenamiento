@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestor de Festival</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <h1>Gestor de Festival</h1>
+
+  <!-- Alertas -->
+  {% for cat, msg in get_flashed_messages(with_categories=true) %}
+    <p class="alerta {{ cat }}">{{ msg }}</p>
+  {% endfor %}
+
+  <!-- ── Formulario agregar / editar ── -->
+  <section>
+
+    {% if editando %}
+      <h2>Editando show — {{ editando.id }}</h2>
+      <form action="/guardar_edicion/{{ editando.id }}" method="POST">
+    {% else %}
+      <h2>Agregar show</h2>
+      <form action="/agregar" method="POST">
+    {% endif %}
+
+        <label>Escenario:
+          <input type="text" name="escenario" required
+                 value="{{ editando.escenario if editando else '' }}">
+        </label>
+
+        <label>Artista / Banda:
+          <input type="text" name="artista" required
+                 value="{{ editando.artista if editando else '' }}">
+        </label>
+
+        <label>Hora de inicio (HH:MM):
+          <input type="text" name="inicio" placeholder="18:30" required
+                 value="{{ editando.inicio if editando else '' }}">
+        </label>
+
+        <label>Duración (minutos):
+          <input type="number" name="duracion" min="1" required
+                 value="{{ editando.duracion if editando else '' }}">
+        </label>
+
+        <div class="botones-form">
+          <button type="submit">
+            {{ "Guardar cambios" if editando else "Agregar show" }}
+          </button>
+          {% if editando %}
+            <a href="/"><button type="button" class="btn-cancelar">Cancelar</button></a>
+          {% endif %}
+        </div>
+
+    </form>
+  </section>
+
+  <!-- ── Buscar + tabla ── -->
+  <section>
+    <h2>Programa del festival ({{ shows|length }} shows)</h2>
+
+    <!-- Buscador -->
+    <form action="/" method="GET">
+      <input type="text" name="q" placeholder="Buscar por ID, artista, escenario u hora..."
+             value="{{ q }}">
+      <button type="submit">Buscar</button>
+      {% if q %}<a href="/">Limpiar</a>{% endif %}
+    </form>
+
+    <br>
+
+    {% if shows %}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Escenario</th>
+            <th>Artista</th>
+            <th>Inicio</th>
+            <th>Duración</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for show in shows %}
+            <tr>
+              <td>{{ show.id }}</td>
+              <td>{{ show.escenario }}</td>
+              <td>{{ show.artista }}</td>
+              <td>{{ show.inicio }}</td>
+              <td>{{ show.duracion }} min</td>
+              <td>
+                <a href="/editar/{{ show.id }}">
+                  <button class="btn-editar">Editar</button>
+                </a>
+                <form action="/eliminar/{{ show.id }}" method="POST" style="display:inline">
+                  <button class="btn-eliminar"
+                          onclick="return confirm('¿Eliminar {{ show.artista }}?')">
+                    Eliminar
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No se encontraron shows.</p>
+    {% endif %}
+
+    <p class="updated">Última actualización: {{ ahora }}</p>
+  </section>
+
+</body>
+</html>

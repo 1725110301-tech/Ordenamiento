@@ -1,0 +1,37 @@
+[
+    {
+        "id": "ESC1-01",
+        "escenario": "Escenario Principal",
+        "artista": "Los Rockeros del Norte",
+        "inicio": "16:00",
+        "duracion": 90
+    },
+    {
+        "id": "ESC2-01",
+        "escenario": "Escenario Indie",
+        "artista": "Banda de Garaje",
+        "inicio": "16:00",
+        "duracion": 45
+    },
+    {
+        "id": "ESC1-02",
+        "escenario": "Escenario Principal",
+        "artista": "DJ Tormenta",
+        "inicio": "18:00",
+        "duracion": 60
+    },
+    {
+        "id": "ESC2-02",
+        "escenario": "Escenario Indie",
+        "artista": "Cantautor Solitario",
+        "inicio": "18:30",
+        "duracion": 45
+    },
+    {
+        "id": "ESC1-03",
+        "escenario": "Escenario Principal",
+        "artista": "Leyendas del Pop",
+        "inicio": "21:00",
+        "duracion": 120
+    }
+]

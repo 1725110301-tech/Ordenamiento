@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema de Tickets</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header><h1>Sistema de Atención de Tickets</h1></header>
+
+  <main>
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in mensajes %}
+        <div class="alerta {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="card">
+      <h2>Registrar ticket</h2>
+      <form action="{{ url_for('registrar') }}" method="post" class="registro">
+        <input type="text" name="cliente" placeholder="Cliente" required>
+        <input type="text" name="problema" placeholder="Problema" required>
+        <input type="number" name="tiempo" placeholder="Minutos" min="1" required>
+        <select name="prioridad">
+          <option value="normal">Normal</option>
+          <option value="prioritaria">Prioritaria</option>
+        </select>
+        <button>Registrar</button>
+      </form>
+    </div>
+
+    <div class="acciones">
+      <form action="{{ url_for('atender') }}" method="post"><button class="verde">Atender siguiente</button></form>
+      <form action="{{ url_for('consultar') }}" method="post"><button class="gris">Consultar siguiente</button></form>
+      <span>Siguiente: <strong>{{ sig if sig else 'nadie en espera' }}</strong></span>
+    </div>
+
+    <div class="filas">
+      <div class="card pri">
+        <h2>Fila prioritaria ({{ prioritaria|length }})</h2>
+        <ul>
+          {% for t in prioritaria %}
+            <li><b>#{{ t.numero }}</b> {{ t.cliente }}<br><small>{{ t.problema }} · {{ t.tiempo }} min</small></li>
+          {% else %}<li class="vacio">(vacía)</li>{% endfor %}
+        </ul>
+      </div>
+      <div class="card nor">
+        <h2>Fila normal ({{ normal|length }})</h2>
+        <ul>
+          {% for t in normal %}
+            <li><b>#{{ t.numero }}</b> {{ t.cliente }}<br><small>{{ t.problema }} · {{ t.tiempo }} min</small></li>
+          {% else %}<li class="vacio">(vacía)</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h2>Estadísticas de atención</h2>
+      <table>
+        <tr><td>Tickets atendidos</td><td>{{ e.atendidos }}</td></tr>
+        <tr><td>Tickets pendientes</td><td>{{ e.pendientes }} (prior. {{ e.pend_pri }}, norm. {{ e.pend_nor }})</td></tr>
+        <tr><td>Tiempo total de atención</td><td>{{ e.total_min }} min</td></tr>
+        <tr><td>Tiempo promedio por ticket</td><td>{{ e.promedio }} min</td></tr>
+        <tr><td>Atendidos prioritarios / normales</td><td>{{ e.at_pri }} / {{ e.at_nor }}</td></tr>
+        <tr><td>Ticket más largo</td><td>{{ e.mayor }}</td></tr>
+      </table>
+    </div>
+  </main>
+</body>
+</html>
